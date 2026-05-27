@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CaféFinance — Gestión de Financiamiento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root {
+    --espresso: #1A0A00;
+    --roast: #2D1200;
+    --caramel: #C46F2D;
+    --cream: #F5EBD8;
+    --milk: #FAF4EB;
+    --foam: #FFF9F2;
+    --gold: #D4A853;
+    --latte: #E8C99A;
+    --text-primary: #1A0A00;
+    --text-secondary: #6B4A2A;
+    --text-muted: #9B7A5A;
+    --border: rgba(196,111,45,0.18);
+    --border-strong: rgba(196,111,45,0.35);
+    --green: #2D5A27;
+    --green-bg: #EAF3E0;
+    --red: #7A1A1A;
+    --red-bg: #FCE8E8;
+    --amber: #7A4A00;
+    --amber-bg: #FEF3DC;
+    --shadow-sm: 0 2px 8px rgba(26,10,0,0.08);
+    --shadow-md: 0 4px 20px rgba(26,10,0,0.12);
+    --shadow-lg: 0 8px 40px rgba(26,10,0,0.18);
+    --r-sm: 8px;
+    --r-md: 12px;
+    --r-lg: 18px;
+    --r-xl: 24px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--milk);
+    color: var(--text-primary);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse 120% 80% at 0% 0%, rgba(196,111,45,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 80% 120% at 100% 100%, rgba(212,168,83,0.05) 0%, transparent 60%);
+  }
+
+  /* LAYOUT */
+  .shell { display: flex; min-height: 100vh; }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 240px;
+    background: var(--espresso);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 50;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .logo-area {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .logo-badge {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--caramel), var(--gold));
+    border-radius: var(--r-md);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(196,111,45,0.4);
+  }
+  .logo-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px; font-weight: 800;
+    color: #fff; letter-spacing: -0.3px;
+    line-height: 1;
+  }
+  .logo-sub {
+    font-size: 11px; color: rgba(255,255,255,0.4);
+    margin-top: 3px; letter-spacing: 0.3px;
+  }
+
+  .nav { padding: 16px 12px; flex: 1; }
+  .nav-label {
+    font-size: 10px; font-weight: 600;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 0 8px;
+    margin-bottom: 6px; margin-top: 16px;
+  }
+  .nav-label:first-child { margin-top: 0; }
+
+  .nav-btn {
+    width: 100%;
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px;
+    border-radius: var(--r-sm);
+    border: none; background: none; cursor: pointer;
+    color: rgba(255,255,255,0.5);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px; font-weight: 400;
+    transition: all 0.15s;
+    text-align: left;
+  }
+  .nav-btn i { font-size: 17px; flex-shrink: 0; }
+  .nav-btn:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.85); }
+  .nav-btn.active {
+    background: rgba(196,111,45,0.25);
+    color: var(--latte);
+    font-weight: 500;
+  }
+  .nav-btn.active i { color: var(--gold); }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    font-size: 11px;
+    color: rgba(255,255,255,0.2);
+  }
+
+  /* MAIN CONTENT */
+  .main-wrap { margin-left: 240px; flex: 1; }
+  
+  .topbar {
+    position: sticky; top: 0; z-index: 40;
+    background: rgba(250,244,235,0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .page-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px; font-weight: 700;
+    color: var(--espresso);
+  }
+  .page-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+  .topbar-actions { display: flex; gap: 8px; align-items: center; }
+
+  /* CONTENT */
+  .content { padding: 28px; }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* METRICS */
+  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  .metric-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 18px 20px;
+    position: relative; overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .metric-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .metric-card::before {
+    content: ''; position: absolute;
+    top: 0; right: 0;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    transform: translate(20px, -20px);
+    opacity: 0.08;
+  }
+  .metric-card:nth-child(1)::before { background: var(--caramel); }
+  .metric-card:nth-child(2)::before { background: #2D5A27; }
+  .metric-card:nth-child(3)::before { background: var(--gold); }
+  .metric-card:nth-child(4)::before { background: #7A1A1A; }
+  .metric-icon {
+    width: 36px; height: 36px;
+    border-radius: var(--r-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    margin-bottom: 14px;
+  }
+  .metric-label { font-size: 11.5px; color: var(--text-muted); font-weight: 500; letter-spacing: 0.2px; }
+  .metric-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px; font-weight: 700;
+    color: var(--espresso);
+    margin-top: 4px; line-height: 1;
+  }
+  .metric-sub { font-size: 11px; color: var(--text-muted); margin-top: 5px; }
+
+  /* CARDS / SECTIONS */
+  .card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--espresso);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title i { color: var(--caramel); }
+  .card-body { padding: 20px; }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--border-strong);
+    background: #fff;
+    color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .btn:hover { background: var(--cream); border-color: var(--caramel); }
+  .btn-sm { padding: 5px 12px; font-size: 12px; }
+  .btn-primary {
+    background: var(--espresso);
+    border-color: var(--espresso);
+    color: var(--latte);
+  }
+  .btn-primary:hover { background: var(--roast); border-color: var(--roast); color: var(--gold); }
+  .btn-caramel {
+    background: var(--caramel);
+    border-color: var(--caramel);
+    color: #fff;
+  }
+  .btn-caramel:hover { background: #b05e20; border-color: #b05e20; }
+  .btn-green {
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+  }
+  .btn-green:hover { background: #1e3d1a; }
+  .btn-danger { color: var(--red); border-color: rgba(122,26,26,0.3); }
+  .btn-danger:hover { background: var(--red-bg); border-color: var(--red); }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; }
+  table.tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.tbl thead th {
+    text-align: left;
+    padding: 10px 16px;
+    font-size: 11px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    background: var(--foam);
+  }
+  table.tbl tbody td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-primary);
+    vertical-align: middle;
+  }
+  table.tbl tbody tr:last-child td { border-bottom: none; }
+  table.tbl tbody tr:hover td { background: var(--milk); }
+  .td-name { font-weight: 500; }
+  .td-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  /* BADGES */
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+  .badge-paid { background: var(--green-bg); color: var(--green); }
+  .badge-pending { background: var(--amber-bg); color: var(--amber); }
+  .badge-due { background: #FEE9D0; color: #7A3B00; }
+  .badge-late { background: var(--red-bg); color: var(--red); }
+
+  /* PROGRESS */
+  .progress-bar {
+    width: 100%; height: 5px;
+    background: var(--cream);
+    border-radius: 3px; overflow: hidden;
+    margin-top: 5px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--caramel), var(--gold));
+    border-radius: 3px;
+    transition: width 0.4s;
+  }
+
+  /* ALERTS */
+  .alert-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 16px;
+    border-radius: var(--r-md);
+    margin-bottom: 8px;
+    border-left: 3px solid transparent;
+    transition: background 0.15s;
+  }
+  .alert-item:hover { opacity: 0.9; }
+  .alert-item.late { background: var(--red-bg); border-color: var(--red); }
+  .alert-item.soon { background: var(--amber-bg); border-color: #C47000; }
+  .alert-icon { font-size: 20px; flex-shrink: 0; }
+  .alert-item.late .alert-icon { color: var(--red); }
+  .alert-item.soon .alert-icon { color: #C47000; }
+  .alert-body { flex: 1; }
+  .alert-title { font-weight: 600; font-size: 13px; }
+  .alert-desc { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+  /* MODAL */
+  .overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(26,10,0,0.55);
+    z-index: 200;
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .overlay.open { display: flex; }
+  .modal {
+    background: #fff;
+    border-radius: var(--r-xl);
+    width: 520px; max-width: 95vw;
+    max-height: 90vh; overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border);
+    animation: modalIn 0.2s ease;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.96) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal-header {
+    padding: 22px 24px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .modal-header-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--caramel), var(--gold));
+    border-radius: var(--r-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: #fff;
+  }
+  .modal-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px; font-weight: 700; color: var(--espresso);
+  }
+  .modal-subtitle { font-size: 12px; color: var(--text-muted); }
+  .modal-body { padding: 22px 24px; }
+  .modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: flex-end; gap: 8px;
+  }
+
+  /* FORM */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-label {
+    font-size: 12px; font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.2px;
+  }
+  .form-input {
+    padding: 9px 13px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    color: var(--text-primary);
+    background: #fff;
+    transition: all 0.15s;
+    width: 100%;
+  }
+  .form-input:focus {
+    outline: none;
+    border-color: var(--caramel);
+    box-shadow: 0 0 0 3px rgba(196,111,45,0.12);
+  }
+  .form-input::placeholder { color: var(--text-muted); }
+  .form-input[readonly] { background: var(--foam); color: var(--text-secondary); }
+
+  /* SCHEDULE PREVIEW */
+  .schedule { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+  .quota-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 14px;
+    background: var(--foam);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+  }
+  .quota-num {
+    width: 26px; height: 26px;
+    background: var(--espresso);
+    color: var(--latte);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+  .quota-info { flex: 1; }
+  .quota-date { font-size: 13px; font-weight: 500; }
+  .quota-amount { font-size: 11px; color: var(--text-muted); }
+
+  /* EMPTY STATE */
+  .empty {
+    text-align: center; padding: 48px 20px;
+    color: var(--text-muted);
+  }
+  .empty i { font-size: 36px; opacity: 0.3; display: block; margin-bottom: 12px; }
+  .empty p { font-size: 14px; }
+
+  /* GOOGLE SHEETS GUIDE */
+  .guide-step {
+    display: flex; gap: 14px;
+    padding: 14px;
+    border-radius: var(--r-md);
+    background: var(--foam);
+    border: 1px solid var(--border);
+    margin-bottom: 10px;
+  }
+  .step-num {
+    width: 28px; height: 28px; flex-shrink: 0;
+    background: var(--espresso);
+    color: var(--latte);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px; font-weight: 700;
+  }
+  .step-content { flex: 1; }
+  .step-title { font-weight: 600; font-size: 13px; color: var(--espresso); margin-bottom: 3px; }
+  .step-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .code-block {
+    background: var(--espresso);
+    color: var(--latte);
+    border-radius: var(--r-sm);
+    padding: 12px 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-x: auto;
+    margin-top: 10px;
+    white-space: pre;
+  }
+
+  /* TOAST */
+  #toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--espresso); color: var(--latte);
+    padding: 12px 20px; border-radius: var(--r-md);
+    font-size: 13px; font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    display: flex; align-items: center; gap: 8px;
+    z-index: 999;
+    transform: translateY(80px); opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+  #toast i { color: var(--gold); }
+
+  /* DETAIL MODAL */
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+  .detail-field label { font-size: 11px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.3px; display: block; margin-bottom: 3px; }
+  .detail-field span { font-size: 13.5px; color: var(--text-primary); font-weight: 500; }
+  .summary-bar {
+    background: var(--foam);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 12px 16px;
+    display: flex; gap: 24px;
+    font-size: 13px;
+    margin-top: 14px;
+  }
+  .summary-item { display: flex; flex-direction: column; gap: 2px; }
+  .summary-item label { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+  .summary-item span { font-weight: 700; color: var(--espresso); font-family: 'Syne', sans-serif; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--latte); border-radius: 3px; }
+
+  /* Responsive hint */
+  .chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    font-size: 12px; color: var(--text-secondary);
+  }
+
+  .info-banner {
+    background: linear-gradient(135deg, rgba(196,111,45,0.08), rgba(212,168,83,0.06));
+    border: 1px solid rgba(196,111,45,0.25);
+    border-radius: var(--r-md);
+    padding: 14px 18px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex; align-items: flex-start; gap: 10px;
+    margin-bottom: 16px;
+  }
+  .info-banner i { color: var(--caramel); font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo-area">
+      <div class="logo-badge">☕</div>
+      <div class="logo-title">CaféFinance</div>
+      <div class="logo-sub">Gestión de financiamiento</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-label">Principal</div>
+      <button class="nav-btn active" onclick="showPage('dashboard')" id="nav-dashboard">
+        <i class="ti ti-layout-dashboard"></i> Inicio
+      </button>
+      <button class="nav-btn" onclick="showPage('clientes')" id="nav-clientes">
+        <i class="ti ti-users"></i> Clientes
+      </button>
+      <button class="nav-btn" onclick="showPage('cobros')" id="nav-cobros">
+        <i class="ti ti-calendar-check"></i> Cobros
+      </button>
+      <div class="nav-label">Ajustes</div>
+      <button class="nav-btn" onclick="showPage('config')" id="nav-config">
+        <i class="ti ti-settings"></i> Configuración
+      </button>
+      <button class="nav-btn" onclick="showPage('sheets')" id="nav-sheets">
+        <i class="ti ti-brand-google"></i> Google Sheets
+      </button>
+    </nav>
+    <div class="sidebar-footer">v2.0 · 100% gratuito</div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-wrap">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div>
+        <div class="page-title" id="topbar-title">Dashboard</div>
+        <div class="page-subtitle" id="topbar-sub">Resumen general de financiamientos</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn" onclick="exportExcel()"><i class="ti ti-download"></i> Exportar Excel</button>
+        <button class="btn btn-primary" onclick="openModal()"><i class="ti ti-plus"></i> Nuevo cliente</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ============ DASHBOARD ============ -->
+      <div class="page active" id="page-dashboard">
+        <div class="metrics" id="metrics-grid"></div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-bell"></i> Alertas de cobro</div>
+            <span class="chip" id="alert-count-chip">—</span>
+          </div>
+          <div class="card-body" style="padding: 14px 20px;" id="alerts-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-clock"></i> Clientes recientes</div>
+          </div>
+          <div class="table-wrap" id="recent-table"></div>
+        </div>
+      </div>
+
+      <!-- ============ CLIENTES ============ -->
+      <div class="page" id="page-clientes">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-users"></i> Todos los clientes</div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-sm" onclick="exportExcel()"><i class="ti ti-file-spreadsheet"></i> Excel</button>
+            </div>
+          </div>
+          <div class="table-wrap" id="clients-table"></div>
+        </div>
+      </div>
+
+      <!-- ============ COBROS ============ -->
+      <div class="page" id="page-cobros">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-calendar-check"></i> Calendario de cobros</div>
+          </div>
+          <div class="table-wrap" id="payments-table"></div>
+        </div>
+      </div>
+
+      <!-- ============ CONFIG ============ -->
+      <div class="page" id="page-config">
+        <div class="card" style="max-width: 480px;">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-adjustments"></i> Parámetros de financiamiento</div>
+          </div>
+          <div class="card-body">
+            <div class="form-grid" style="grid-template-columns:1fr 1fr;gap:16px">
+              <div class="form-group">
+                <label class="form-label">Días entre cuotas</label>
+                <input class="form-input" id="cfg-dias" type="number" value="14" min="1">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Número de cuotas</label>
+                <input class="form-input" id="cfg-cuotas" type="number" value="3" min="1">
+              </div>
+            </div>
+            <button class="btn btn-primary" style="margin-top:16px" onclick="saveConfig()">
+              <i class="ti ti-device-floppy"></i> Guardar configuración
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ GOOGLE SHEETS ============ -->
+      <div class="page" id="page-sheets">
+        <div class="info-banner">
+          <i class="ti ti-info-circle"></i>
+          <span>La integración con Google Sheets requiere Google Apps Script. Sigue la guía de abajo para configurarla <strong>gratis</strong> en menos de 10 minutos. Los datos se sincronizan automáticamente cada vez que presionas "Sincronizar".</span>
+        </div>
+
+        <!-- PASO A PASO -->
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-list-check"></i> Guía paso a paso: conectar Google Sheets</div>
+          </div>
+          <div class="card-body">
+            <div class="guide-step">
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <div class="step-title">Crea una hoja de Google Sheets</div>
+                <div class="step-desc">Ve a <strong>sheets.google.com</strong>, crea una hoja nueva y cópiala la URL. El ID es la parte entre <code>/d/</code> y <code>/edit</code>.<br>Ej: <code>https://docs.google.com/spreadsheets/d/<strong>1BxiMVs0XRA5...</strong>/edit</code></div>
+              </div>
+            </div>
+            <div class="guide-step">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                <div class="step-title">Abre el editor de Apps Script</div>
+                <div class="step-desc">En tu hoja de Google Sheets, ve al menú <strong>Extensiones → Apps Script</strong>. Esto abre el editor de código.</div>
+              </div>
+            </div>
+            <div class="guide-step">
+              <div class="step-num">3</div>
+              <div class="step-content">
+                <div class="step-title">Pega este código en el editor</div>
+                <div class="step-desc">Borra lo que hay, pega el siguiente código y guarda (Ctrl+S):</div>
+                <div class="code-block">function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    
+    // Hoja de Clientes
+    var sh = ss.getSheetByName('Clientes') || ss.insertSheet('Clientes');
+    if (sh.getLastRow() === 0) {
+      sh.appendRow(['ID','Nombre','Teléfono','Email',
+        'Máquina','Total','Inicial','Fecha venta',
+        'Cuotas pagadas','Cuotas totales','Estado']);
+    }
+    sh.clearContents();
+    sh.appendRow(['ID','Nombre','Teléfono','Email',
+      'Máquina','Total','Inicial','Fecha venta',
+      'Cuotas pagadas','Cuotas totales','Estado']);
+    data.clientes.forEach(function(c) {
+      var pagadas = c.cuotas.filter(function(q){return q.estado==='pagado';}).length;
+      var estado = pagadas === c.cuotas.length ? 'Finalizado' : 'Activo';
+      sh.appendRow([c.id, c.nombre, c.tel, c.email,
+        c.maquina, c.total, c.inicial, c.fecha,
+        pagadas, c.cuotas.length, estado]);
+    });
+
+    // Hoja de Cuotas
+    var sh2 = ss.getSheetByName('Cuotas') || ss.insertSheet('Cuotas');
+    sh2.clearContents();
+    sh2.appendRow(['Cliente','Cuota #','Fecha','Monto','Estado']);
+    data.clientes.forEach(function(c) {
+      c.cuotas.forEach(function(q) {
+        sh2.appendRow([c.nombre, q.num, q.fecha, q.monto, q.estado]);
+      });
+    });
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ok: true}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ok:false,error:err.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doGet(e) {
+  return ContentService
+    .createTextOutput('CaféFinance Webhook activo ✓')
+    .setMimeType(ContentService.MimeType.TEXT);
+}</div>
+              </div>
+            </div>
+            <div class="guide-step">
+              <div class="step-num">4</div>
+              <div class="step-content">
+                <div class="step-title">Despliega como Web App</div>
+                <div class="step-desc">
+                  Haz clic en <strong>Implementar → Nueva implementación</strong>.<br>
+                  • Tipo: <strong>Aplicación web</strong><br>
+                  • Ejecutar como: <strong>Yo</strong><br>
+                  • Quién tiene acceso: <strong>Cualquier usuario</strong><br>
+                  Clic en <strong>Implementar</strong> y copia la URL que aparece.
+                </div>
+              </div>
+            </div>
+            <div class="guide-step">
+              <div class="step-num">5</div>
+              <div class="step-content">
+                <div class="step-title">Pega la URL en CaféFinance</div>
+                <div class="step-desc">Copia la URL del paso anterior y pégala abajo. Luego prueba la sincronización.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONEXIÓN -->
+        <div class="card" style="max-width: 560px;">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-plug"></i> Conexión</div>
+          </div>
+          <div class="card-body">
+            <div class="form-group" style="margin-bottom:14px">
+              <label class="form-label">URL de tu Web App (Google Apps Script)</label>
+              <input class="form-input" id="sheet-url" placeholder="https://script.google.com/macros/s/.../exec">
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-caramel" onclick="saveSheetUrl()"><i class="ti ti-device-floppy"></i> Guardar URL</button>
+              <button class="btn btn-green" onclick="syncToSheets()"><i class="ti ti-refresh"></i> Sincronizar ahora</button>
+            </div>
+            <div id="sheets-status" style="margin-top:12px"></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main-wrap -->
+</div><!-- /shell -->
+
+<!-- ============ MODAL NUEVO CLIENTE ============ -->
+<div class="overlay" id="modal-new">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-icon"><i class="ti ti-user-plus"></i></div>
+      <div>
+        <div class="modal-title">Nuevo cliente con financiamiento</div>
+        <div class="modal-subtitle">Completa los datos y el plan se genera automáticamente</div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label class="form-label">Nombre completo *</label>
+          <input class="form-input" id="f-nombre" placeholder="Ej: Juan García">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Teléfono</label>
+          <input class="form-input" id="f-tel" placeholder="+503 7000-0000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Correo electrónico</label>
+          <input class="form-input" id="f-email" placeholder="correo@ejemplo.com">
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Máquina / Producto *</label>
+          <input class="form-input" id="f-maquina" placeholder="Ej: Cafetera Espresso Pro X200">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Precio total ($) *</label>
+          <input class="form-input" id="f-total" type="number" placeholder="500.00" oninput="calcCuotas()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Inicial ($) *</label>
+          <input class="form-input" id="f-inicial" type="number" placeholder="150.00" oninput="calcCuotas()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Fecha de venta *</label>
+          <input class="form-input" id="f-fecha" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Monto por cuota</label>
+          <input class="form-input" id="f-cuota-calc" readonly placeholder="Se calcula solo">
+        </div>
+        <div class="form-group full" id="schedule-preview" style="display:none">
+          <label class="form-label">📅 Plan de pagos generado</label>
+          <div class="schedule" id="schedule-rows"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-new')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveClient()"><i class="ti ti-check"></i> Registrar cliente</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL DETALLE CLIENTE ============ -->
+<div class="overlay" id="modal-detail">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-icon"><i class="ti ti-user"></i></div>
+      <div>
+        <div class="modal-title" id="detail-name">Detalle cliente</div>
+        <div class="modal-subtitle" id="detail-machine">—</div>
+      </div>
+    </div>
+    <div class="modal-body" id="detail-content"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-detail')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"><i class="ti ti-circle-check"></i> <span id="toast-msg"></span></div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let clients = JSON.parse(localStorage.getItem('cafe_clients') || '[]');
+let cfg = JSON.parse(localStorage.getItem('cafe_cfg') || '{"dias":14,"cuotas":3}');
+let sheetUrl = localStorage.getItem('cafe_sheet_url') || '';
+
+// ─── UTILS ────────────────────────────────────────────────────────────────────
+function save() {
+  localStorage.setItem('cafe_clients', JSON.stringify(clients));
+  localStorage.setItem('cafe_cfg', JSON.stringify(cfg));
+}
+function today() { return new Date().toISOString().split('T')[0]; }
+function addDays(dateStr, n) {
+  const d = new Date(dateStr + 'T12:00:00');
+  d.setDate(d.getDate() + n);
+  return d.toISOString().split('T')[0];
+}
+function diffDays(a, b) {
+  return Math.round((new Date(b) - new Date(a)) / (1000*60*60*24));
+}
+function fmt(d) {
+  return new Date(d + 'T12:00:00').toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'});
+}
+function money(n) { return '$' + Number(n).toFixed(2); }
+function toast(msg, type) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.style.background = type === 'error' ? '#7A1A1A' : 'var(--espresso)';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+function statusBadge(s, d) {
+  if (s === 'pagado') return '<span class="badge badge-paid"><i class="ti ti-check"></i> Pagado</span>';
+  const dt = today();
+  if (d < dt) return '<span class="badge badge-late"><i class="ti ti-alert-triangle"></i> Vencido</span>';
+  const df = diffDays(dt, d);
+  if (df <= 3) return '<span class="badge badge-due"><i class="ti ti-clock"></i> Próximo</span>';
+  return '<span class="badge badge-pending"><i class="ti ti-calendar"></i> Pendiente</span>';
+}
+
+// ─── NAVIGATION ──────────────────────────────────────────────────────────────
+const PAGE_META = {
+  dashboard: { title: 'Dashboard', sub: 'Resumen general de financiamientos' },
+  clientes:  { title: 'Clientes', sub: 'Todos los clientes con financiamiento activo' },
+  cobros:    { title: 'Cobros', sub: 'Calendario completo de pagos' },
+  config:    { title: 'Configuración', sub: 'Ajusta los parámetros de financiamiento' },
+  sheets:    { title: 'Google Sheets', sub: 'Sincroniza tus datos con una hoja de cálculo' },
+};
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.getElementById('nav-' + id).classList.add('active');
+  const m = PAGE_META[id];
+  document.getElementById('topbar-title').textContent = m.title;
+  document.getElementById('topbar-sub').textContent = m.sub;
+  if (id === 'dashboard') renderDashboard();
+  if (id === 'clientes')  renderClients();
+  if (id === 'cobros')    renderPayments();
+  if (id === 'config') {
+    document.getElementById('cfg-dias').value = cfg.dias;
+    document.getElementById('cfg-cuotas').value = cfg.cuotas;
+  }
+  if (id === 'sheets' && sheetUrl) {
+    document.getElementById('sheet-url').value = sheetUrl;
+  }
+}
+
+// ─── MODAL ────────────────────────────────────────────────────────────────────
+function openModal() {
+  document.getElementById('f-fecha').value = today();
+  calcCuotas();
+  document.getElementById('modal-new').classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  if (id === 'modal-new') {
+    ['f-nombre','f-tel','f-email','f-maquina','f-total','f-inicial','f-cuota-calc'].forEach(i => document.getElementById(i).value = '');
+    document.getElementById('schedule-preview').style.display = 'none';
+  }
+}
+
+// ─── CALC CUOTAS ─────────────────────────────────────────────────────────────
+function calcCuotas() {
+  const total = parseFloat(document.getElementById('f-total').value) || 0;
+  const ini   = parseFloat(document.getElementById('f-inicial').value) || 0;
+  const resto = total - ini;
+  const nq    = cfg.cuotas;
+  const mq    = nq > 0 ? resto / nq : 0;
+  document.getElementById('f-cuota-calc').value = mq > 0 ? money(mq) : '';
+  const fechaBase = document.getElementById('f-fecha').value || today();
+  if (mq > 0) {
+    document.getElementById('schedule-preview').style.display = 'block';
+    let html = '';
+    for (let i = 1; i <= nq; i++) {
+      const fd = addDays(fechaBase, cfg.dias * i);
+      html += `<div class="quota-row">
+        <div class="quota-num">${i}</div>
+        <div class="quota-info">
+          <div class="quota-date">${fmt(fd)}</div>
+          <div class="quota-amount">${money(mq)}</div>
+        </div>
+        <span class="badge badge-pending">Pendiente</span>
+      </div>`;
+    }
+    document.getElementById('schedule-rows').innerHTML = html;
+  }
+}
+document.getElementById('f-fecha').addEventListener('change', calcCuotas);
+
+// ─── SAVE CLIENT ─────────────────────────────────────────────────────────────
+function saveClient() {
+  const nombre  = document.getElementById('f-nombre').value.trim();
+  const tel     = document.getElementById('f-tel').value.trim();
+  const email   = document.getElementById('f-email').value.trim();
+  const maquina = document.getElementById('f-maquina').value.trim();
+  const total   = parseFloat(document.getElementById('f-total').value);
+  const inicial = parseFloat(document.getElementById('f-inicial').value);
+  const fecha   = document.getElementById('f-fecha').value;
+  if (!nombre || !maquina || !total || !inicial || !fecha) {
+    toast('Completa todos los campos requeridos', 'error'); return;
+  }
+  if (inicial >= total) {
+    toast('La inicial no puede ser mayor o igual al total', 'error'); return;
+  }
+  const resto   = total - inicial;
+  const porCuota = resto / cfg.cuotas;
+  const cuotas  = [];
+  for (let i = 1; i <= cfg.cuotas; i++) {
+    cuotas.push({ num: i, fecha: addDays(fecha, cfg.dias * i), monto: porCuota, estado: 'pendiente' });
+  }
+  const client = { id: Date.now(), nombre, tel, email, maquina, total, inicial, resto, fecha, cuotas };
+  clients.unshift(client);
+  save();
+  closeModal('modal-new');
+  toast('Cliente registrado exitosamente ✓');
+  showPage('clientes');
+}
+
+// ─── RENDER DASHBOARD ────────────────────────────────────────────────────────
+function renderDashboard() {
+  const dt = today();
+  let pendiente = 0, cobrado = 0, vencidos = 0;
+  clients.forEach(c => {
+    c.cuotas.forEach(q => {
+      if (q.estado === 'pagado') cobrado += q.monto;
+      else { pendiente += q.monto; if (q.fecha < dt) vencidos++; }
+    });
+  });
+  document.getElementById('metrics-grid').innerHTML = `
+    <div class="metric-card">
+      <div class="metric-icon" style="background:#FAF0E8;color:var(--caramel)"><i class="ti ti-users"></i></div>
+      <div class="metric-label">Clientes activos</div>
+      <div class="metric-value">${clients.length}</div>
+      <div class="metric-sub">con financiamiento</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon" style="background:var(--amber-bg);color:var(--amber)"><i class="ti ti-clock"></i></div>
+      <div class="metric-label">Por cobrar</div>
+      <div class="metric-value">${money(pendiente)}</div>
+      <div class="metric-sub">cuotas pendientes</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon" style="background:var(--green-bg);color:var(--green)"><i class="ti ti-circle-check"></i></div>
+      <div class="metric-label">Cobrado</div>
+      <div class="metric-value">${money(cobrado)}</div>
+      <div class="metric-sub">cuotas pagadas</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon" style="background:var(--red-bg);color:var(--red)"><i class="ti ti-alert-triangle"></i></div>
+      <div class="metric-label">Vencidos</div>
+      <div class="metric-value" style="color:var(--red)">${vencidos}</div>
+      <div class="metric-sub">pagos atrasados</div>
+    </div>
+  `;
+
+  // Alerts
+  const alerts = [];
+  clients.forEach(c => {
+    c.cuotas.forEach(q => {
+      if (q.estado !== 'pagado') {
+        const df = diffDays(dt, q.fecha);
+        if (df < 0) alerts.push({ tipo: 'late', nombre: c.nombre, q, df: Math.abs(df), id: c.id });
+        else if (df <= 5) alerts.push({ tipo: 'soon', nombre: c.nombre, q, df, id: c.id });
+      }
+    });
+  });
+  document.getElementById('alert-count-chip').textContent = alerts.length > 0 ? `${alerts.length} alertas` : 'Sin alertas';
+  const alertsList = document.getElementById('alerts-list');
+  if (alerts.length === 0) {
+    alertsList.innerHTML = '<div class="empty"><i class="ti ti-circle-check"></i><p>¡Todo al día! No hay alertas pendientes</p></div>';
+  } else {
+    alerts.sort((a, b) => a.q.fecha.localeCompare(b.q.fecha));
+    alertsList.innerHTML = alerts.slice(0, 10).map(a => `
+      <div class="alert-item ${a.tipo}">
+        <i class="ti ti-${a.tipo === 'late' ? 'alert-circle' : 'clock'} alert-icon"></i>
+        <div class="alert-body">
+          <div class="alert-title">${a.nombre} — Cuota ${a.q.num}</div>
+          <div class="alert-desc">${a.tipo === 'late'
+            ? `Vencida hace ${a.df} día(s) · ${money(a.q.monto)}`
+            : `Vence en ${a.df} día(s) · ${fmt(a.q.fecha)} · ${money(a.q.monto)}`
+          }</div>
+        </div>
+        <button class="btn btn-sm btn-green" onclick="markPaid(${a.id},${a.q.num})"><i class="ti ti-check"></i> Cobrado</button>
+      </div>
+    `).join('');
+  }
+
+  // Recent
+  const recent = document.getElementById('recent-table');
+  if (clients.length === 0) {
+    recent.innerHTML = '<div class="empty"><i class="ti ti-coffee"></i><p>Sin clientes aún. ¡Agrega el primero!</p></div>';
+    return;
+  }
+  recent.innerHTML = `<table class="tbl">
+    <thead><tr>
+      <th>Cliente</th><th>Máquina</th><th>Total</th><th>Progreso</th><th>Próx. cuota</th><th></th>
+    </tr></thead>
+    <tbody>${clients.slice(0, 5).map(c => {
+      const pagadas = c.cuotas.filter(q => q.estado === 'pagado').length;
+      const prox = c.cuotas.find(q => q.estado === 'pendiente');
+      const pct = Math.round(pagadas / c.cuotas.length * 100);
+      return `<tr>
+        <td><div class="td-name">${c.nombre}</div><div class="td-sub">${c.tel || c.email || '—'}</div></td>
+        <td><div class="td-sub">${c.maquina}</div></td>
+        <td>${money(c.total)}</td>
+        <td>
+          <div style="font-size:12px">${pagadas}/${c.cuotas.length} cuotas</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+        </td>
+        <td>${prox ? `<div>${fmt(prox.fecha)}</div><div class="td-sub">${money(prox.monto)}</div>` : '<span class="badge badge-paid">Finalizado</span>'}</td>
+        <td><button class="btn btn-sm" onclick="openDetail(${c.id})"><i class="ti ti-eye"></i></button></td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+// ─── RENDER CLIENTS ──────────────────────────────────────────────────────────
+function renderClients() {
+  const el = document.getElementById('clients-table');
+  if (clients.length === 0) {
+    el.innerHTML = '<div class="empty"><i class="ti ti-users"></i><p>No hay clientes registrados</p></div>';
+    return;
+  }
+  el.innerHTML = `<table class="tbl">
+    <thead><tr>
+      <th>Cliente</th><th>Máquina</th><th>Total</th><th>Inicial</th><th>Progreso</th><th>Próx. cobro</th><th>Acciones</th>
+    </tr></thead>
+    <tbody>${clients.map(c => {
+      const pagadas = c.cuotas.filter(q => q.estado === 'pagado').length;
+      const prox = c.cuotas.find(q => q.estado === 'pendiente');
+      const pct = Math.round(pagadas / c.cuotas.length * 100);
+      return `<tr>
+        <td><div class="td-name">${c.nombre}</div><div class="td-sub">${c.email || '—'}</div></td>
+        <td><div class="td-sub">${c.maquina}</div></td>
+        <td>${money(c.total)}</td>
+        <td>${money(c.inicial)}</td>
+        <td>
+          <div style="font-size:12px">${pagadas}/${c.cuotas.length}</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+        </td>
+        <td>${prox ? fmt(prox.fecha) : '<span class="badge badge-paid">✓ Finalizado</span>'}</td>
+        <td style="display:flex;gap:6px">
+          <button class="btn btn-sm" onclick="openDetail(${c.id})"><i class="ti ti-eye"></i></button>
+          <button class="btn btn-sm btn-danger" onclick="deleteClient(${c.id})"><i class="ti ti-trash"></i></button>
+        </td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+// ─── RENDER PAYMENTS ─────────────────────────────────────────────────────────
+function renderPayments() {
+  const el = document.getElementById('payments-table');
+  const all = [];
+  clients.forEach(c => {
+    c.cuotas.forEach(q => all.push({ ...q, cliente: c.nombre, maquina: c.maquina, cid: c.id }));
+  });
+  all.sort((a, b) => a.fecha.localeCompare(b.fecha));
+  if (all.length === 0) {
+    el.innerHTML = '<div class="empty"><i class="ti ti-calendar"></i><p>No hay cuotas registradas</p></div>';
+    return;
+  }
+  el.innerHTML = `<table class="tbl">
+    <thead><tr>
+      <th>Fecha de cobro</th><th>Cliente</th><th>Producto</th><th>Cuota #</th><th>Monto</th><th>Estado</th><th></th>
+    </tr></thead>
+    <tbody>${all.map(q => `<tr>
+      <td><strong>${fmt(q.fecha)}</strong></td>
+      <td>${q.cliente}</td>
+      <td><div class="td-sub">${q.maquina}</div></td>
+      <td style="text-align:center">${q.num}</td>
+      <td>${money(q.monto)}</td>
+      <td>${statusBadge(q.estado, q.fecha)}</td>
+      <td>${q.estado !== 'pagado'
+        ? `<button class="btn btn-sm btn-green" onclick="markPaid(${q.cid},${q.num})"><i class="ti ti-check"></i> Cobrado</button>`
+        : ''
+      }</td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+// ─── MARK PAID ────────────────────────────────────────────────────────────────
+function markPaid(cid, qnum) {
+  const c = clients.find(x => x.id === cid);
+  if (!c) return;
+  const q = c.cuotas.find(x => x.num === qnum);
+  if (!q) return;
+  q.estado = 'pagado';
+  save();
+  toast(`Cuota ${qnum} de ${c.nombre} marcada como pagada`);
+  renderDashboard();
+  renderPayments();
+  renderClients();
+}
+
+// ─── DELETE CLIENT ────────────────────────────────────────────────────────────
+function deleteClient(id) {
+  const c = clients.find(x => x.id === id);
+  if (!confirm(`¿Eliminar a ${c.nombre} y todas sus cuotas?`)) return;
+  clients = clients.filter(c => c.id !== id);
+  save();
+  renderClients();
+  renderDashboard();
+  toast('Cliente eliminado');
+}
+
+// ─── DETAIL ───────────────────────────────────────────────────────────────────
+function openDetail(id) {
+  const c = clients.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('detail-name').textContent = c.nombre;
+  document.getElementById('detail-machine').textContent = c.maquina;
+  const pagadas = c.cuotas.filter(q => q.estado === 'pagado').reduce((s, q) => s + q.monto, 0);
+  document.getElementById('detail-content').innerHTML = `
+    <div class="detail-grid">
+      <div class="detail-field"><label>Teléfono</label><span>${c.tel || '—'}</span></div>
+      <div class="detail-field"><label>Correo</label><span>${c.email || '—'}</span></div>
+      <div class="detail-field"><label>Fecha de venta</label><span>${fmt(c.fecha)}</span></div>
+      <div class="detail-field"><label>Precio total</label><span>${money(c.total)}</span></div>
+      <div class="detail-field"><label>Inicial pagada</label><span>${money(c.inicial)}</span></div>
+      <div class="detail-field"><label>Saldo financiado</label><span>${money(c.resto)}</span></div>
+    </div>
+    <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;letter-spacing:0.4px;text-transform:uppercase;">Plan de cuotas</div>
+    <div class="schedule">${c.cuotas.map(q => `
+      <div class="quota-row">
+        <div class="quota-num">${q.num}</div>
+        <div class="quota-info">
+          <div class="quota-date">${fmt(q.fecha)}</div>
+          <div class="quota-amount">${money(q.monto)}</div>
+        </div>
+        ${statusBadge(q.estado, q.fecha)}
+        ${q.estado !== 'pagado'
+          ? `<button class="btn btn-sm btn-green" onclick="markPaid(${c.id},${q.num});closeModal('modal-detail')"><i class="ti ti-check"></i></button>`
+          : ''
+        }
+      </div>
+    `).join('')}</div>
+    <div class="summary-bar">
+      <div class="summary-item"><label>Cobrado</label><span>${money(pagadas)}</span></div>
+      <div class="summary-item"><label>Pendiente</label><span>${money(c.resto - pagadas)}</span></div>
+      <div class="summary-item"><label>Avance</label><span>${Math.round(pagadas/c.resto*100)}%</span></div>
+    </div>
+  `;
+  document.getElementById('modal-detail').classList.add('open');
+}
+
+// ─── CONFIG ───────────────────────────────────────────────────────────────────
+function saveConfig() {
+  cfg.dias   = parseInt(document.getElementById('cfg-dias').value) || 14;
+  cfg.cuotas = parseInt(document.getElementById('cfg-cuotas').value) || 3;
+  localStorage.setItem('cafe_cfg', JSON.stringify(cfg));
+  toast('Configuración guardada');
+}
+
+// ─── GOOGLE SHEETS ────────────────────────────────────────────────────────────
+function saveSheetUrl() {
+  sheetUrl = document.getElementById('sheet-url').value.trim();
+  localStorage.setItem('cafe_sheet_url', sheetUrl);
+  toast('URL guardada correctamente');
+}
+
+async function syncToSheets() {
+  if (!sheetUrl) { toast('Primero guarda la URL del Apps Script', 'error'); return; }
+  const statusEl = document.getElementById('sheets-status');
+  statusEl.innerHTML = '<div style="font-size:13px;color:var(--text-muted)"><i class="ti ti-loader-2"></i> Sincronizando...</div>';
+  try {
+    const resp = await fetch(sheetUrl, {
+      method: 'POST',
+      body: JSON.stringify({ clientes: clients }),
+    });
+    const data = await resp.json();
+    if (data.ok) {
+      statusEl.innerHTML = '<div style="font-size:13px;background:var(--green-bg);color:var(--green);padding:10px 14px;border-radius:8px"><i class="ti ti-circle-check"></i> ¡Sincronización exitosa! Los datos ya están en tu Google Sheet.</div>';
+      toast('Datos sincronizados con Google Sheets ✓');
+    } else {
+      throw new Error(data.error || 'Error desconocido');
+    }
+  } catch(e) {
+    statusEl.innerHTML = `<div style="font-size:13px;background:var(--red-bg);color:var(--red);padding:10px 14px;border-radius:8px"><i class="ti ti-alert-circle"></i> Error: ${e.message}. Verifica que la URL sea correcta y que el Apps Script esté desplegado como "Cualquier usuario".</div>`;
+  }
+}
+
+// ─── EXPORT EXCEL ─────────────────────────────────────────────────────────────
+function exportExcel() {
+  const rows = [['ID','Nombre','Teléfono','Email','Máquina','Total','Inicial','Fecha venta','Cuota #','Fecha cuota','Monto cuota','Estado']];
+  clients.forEach(c => {
+    c.cuotas.forEach(q => {
+      rows.push([c.id, c.nombre, c.tel, c.email, c.maquina, c.total, c.inicial, c.fecha, q.num, q.fecha, q.monto, q.estado]);
+    });
+  });
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'caféfinance_datos.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('Archivo descargado');
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+renderDashboard();
+</script>
+</body>
+</html>
